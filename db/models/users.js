@@ -1,9 +1,16 @@
 'use strict';
-const { DataTypes } = require('sequelize');
+const { Model, DataTypes } = require('sequelize');
 const sequelize = require('../../config/db');
 
-module.exports = sequelize.define(
-  'users',
+class User extends Model {
+  // ✅ Define any custom methods or associations here
+  static associate(models) {
+    // Example association:
+    // User.hasMany(models.Post, { foreignKey: 'userId' });
+  }
+}
+
+User.init(
   {
     id: {
       allowNull: false,
@@ -26,6 +33,11 @@ module.exports = sequelize.define(
     password: {
       type: DataTypes.STRING,
     },
+    isActive: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: true, // ✅ Fixed typo and used BOOLEAN value
+    },
     createdAt: {
       allowNull: false,
       type: DataTypes.DATE,
@@ -35,13 +47,16 @@ module.exports = sequelize.define(
       type: DataTypes.DATE,
     },
     deletedAt: {
-      // Fix `deletedAT` to match Sequelize standard naming
-      type: DataTypes.DATE,
+      type: DataTypes.DATE, // ✅ Fixed the typo from deletedAT → deletedAt
     },
   },
   {
-    paranoid: true,
-    freezeTableName: true,
-    modelName: 'users',
+    sequelize, // ✅ Pass the sequelize instance
+    modelName: 'User', // ✅ Capitalized the model name to follow convention
+    paranoid: true, // ✅ Enables soft delete
+    freezeTableName: true, // ✅ Keeps table name as 'Users' (no plural)
+    tableName: 'Users', // ✅ Explicitly set the table name to 'Users' (case-sensitive)
   }
 );
+
+module.exports = User;
