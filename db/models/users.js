@@ -46,16 +46,13 @@ User.init(
       allowNull: false,
       type: DataTypes.DATE,
     },
-    deletedAt: {
-      type: DataTypes.DATE, // ✅ Fixed the typo from deletedAT → deletedAt
-    },
   },
   {
-    sequelize, // ✅ Pass the sequelize instance
-    modelName: 'User', // ✅ Capitalized the model name to follow convention
-    paranoid: true, // ✅ Enables soft delete
-    freezeTableName: true, // ✅ Keeps table name as 'Users' (no plural)
-    tableName: 'Users', // ✅ Explicitly set the table name to 'Users' (case-sensitive)
+    sequelize, // Pass the sequelize instance
+    modelName: 'User', //  Capitalized the model name to follow convention
+    paranoid: false,
+    freezeTableName: true, // Keeps table name as 'Users' (no plural)
+    tableName: 'Users', // Explicitly set the table name to 'Users' (case-sensitive)
   }
 );
 
