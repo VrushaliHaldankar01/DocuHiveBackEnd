@@ -38,6 +38,10 @@ User.init(
       allowNull: false,
       defaultValue: true, // ✅ Fixed typo and used BOOLEAN value
     },
+    verificationToken: {
+      type: DataTypes.STRING, // ✅ Stores the email verification token
+      allowNull: true, // Can be null after the user is verified
+    },
     createdAt: {
       allowNull: false,
       type: DataTypes.DATE,

@@ -1,6 +1,8 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../db/models/users');
+const { sendEmail } = require('../utils/mailer');
+const crypto = require('crypto');
 
 const signup = async (req, res, next) => {
   try {
@@ -17,6 +19,9 @@ const signup = async (req, res, next) => {
     //Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
 
+    //generate a unique verification token
+    const verificationToken = crypto.randomBytes(32).toString('hex');
+
     //create new user
     const newUser = await User.create({
       userType,
@@ -24,23 +29,20 @@ const signup = async (req, res, next) => {
       lastName,
       email,
       password: hashedPassword,
-      isActive: 1,
+      isActive: 0,
+      verificationToken,
     });
-    //Generate jwt Token
-    const token = jwt.sign(
-      { id: newUser.id, email: newUser.email },
-      process.env.JWT_SECRET,
-      { expiresIn: '1h' }
+
+    const verificationLink = `${process.env.FRONTEND_URL}/verify-email?token=${verificationToken}`;
+    await sendEmail(
+      email,
+      'Verify Your Email',
+      `Click the link to verify your account: ${verificationLink}`
     );
+
     return res.status(201).json({
-      message: 'User registered successfully!',
-      user: {
-        id: newUser.id,
-        email: newUser.email,
-        firstName: newUser.firstName,
-        lastName: newUser.lastName,
-      },
-      token,
+      message:
+        'User registered successfully! Please check your email to verify your account.',
     });
   } catch (error) {
     console.error('signup Error', error);

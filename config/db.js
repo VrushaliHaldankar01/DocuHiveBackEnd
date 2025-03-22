@@ -1,15 +1,7 @@
-// const { Sequelize } = require('sequelize');
-
-// const env = process.env.NODE_ENV || 'development';
-// const config = require('./config')[env];
-// const sequelize = new Sequelize(config);
-
-// module.exports = sequelize;
-
 const { Sequelize } = require('sequelize'); // Import Sequelize class
 
-const env = process.env.NODE_ENV || 'development'; // Get the current environment (default to 'development')
-const config = require('./config')[env]; // Access the configuration based on the environment
+const env = process.env.NODE_ENV || 'development';
+const config = require('./config')[env];
 
 // Initialize Sequelize with the database configuration
 const sequelize = new Sequelize(
