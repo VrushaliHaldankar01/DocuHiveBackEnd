@@ -13,8 +13,8 @@ const transport = nodemailer.createTransport({
 const sendEmail = async (to, subject, text) => {
   const mailOptions = {
     from: process.env.EMAIL_USER,
-    to: 'swagatdine@gmail.com',
-    subject: 'verify email',
+    to,
+    subject,
     text,
   };
   try {

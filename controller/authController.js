@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken');
 const User = require('../db/models/users');
 const { sendEmail } = require('../utils/mailer');
 const crypto = require('crypto');
+// const { sign } = require('jsonwebtoken');
 
 const signup = async (req, res, next) => {
   try {
@@ -19,7 +20,7 @@ const signup = async (req, res, next) => {
     //Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    //generate a unique verification token
+    // //generate a unique verification token
     const verificationToken = crypto.randomBytes(32).toString('hex');
 
     //create new user
@@ -33,7 +34,7 @@ const signup = async (req, res, next) => {
       verificationToken,
     });
 
-    const verificationLink = `${process.env.FRONTEND_URL}/verify-email?token=${verificationToken}`;
+    const verificationLink = `${process.env.FRONTEND_URL}/login?token=${verificationToken}`;
     await sendEmail(
       email,
       'Verify Your Email',

@@ -1,11 +1,16 @@
 require('dotenv').config();
 const express = require('express');
 const app = express();
+const cors = require('cors');
 const authRouter = require('./route/authRoute');
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
+app.use(
+  cors({
+    origin: 'http://localhost:5173', // or '*' to allow all origins (not recommended for production)
+  })
+);
 app.get('/', (req, res) => {
   res.status(200).json({
     status: 'success',
