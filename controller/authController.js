@@ -56,11 +56,20 @@ const login = async (req, res, next) => {
     const { email, password } = req.body;
     const checkUser = await User.findOne({ where: { email } });
     if (!checkUser) {
-      return res.status(400).json({ error: 'User Not Found' });
+      return res.status(400).json({ error: 'Login failed! Please Register.' });
+    }
+    if (!checkUser.isActive) {
+      return res
+        .status(400)
+        .json({
+          error: 'You have not varified your account,please check inbox!.',
+        });
     }
     const passwordValid = await bcrypt.compare(password, checkUser.password);
     if (!passwordValid) {
-      return res.status(400).json({ error: 'Incorrect Password' });
+      return res
+        .status(400)
+        .json({ error: 'Login failed! Please check your credentials.' });
     } else {
       return res.status(200).json({
         user: {
