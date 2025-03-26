@@ -3,10 +3,11 @@ const { Model, DataTypes } = require('sequelize');
 const sequelize = require('../../config/db');
 
 class User extends Model {
-  // ✅ Define any custom methods or associations here
   static associate(models) {
-    // Example association:
-    // User.hasMany(models.Post, { foreignKey: 'userId' });
+    User.hasOne(models.PersonalDetails, {
+      foreignKey: 'userId',
+      onDelete: 'CASCADE', // Delete personal details if user is removed
+    });
   }
 }
 
