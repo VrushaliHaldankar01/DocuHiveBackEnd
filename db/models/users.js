@@ -1,64 +1,65 @@
 'use strict';
-const { Model, DataTypes } = require('sequelize');
-const sequelize = require('../../config/db');
+const { Model } = require('sequelize');
 
-class User extends Model {
-  static associate(models) {
-    User.hasOne(models.PersonalDetails, {
-      foreignKey: 'userId',
-      onDelete: 'CASCADE', // Delete personal details if user is removed
-    });
+module.exports = (sequelize, DataTypes) => {
+  class User extends Model {
+    static associate(models) {
+      User.hasOne(models.PersonalDetails, {
+        foreignKey: 'userId',
+        onDelete: 'CASCADE',
+      });
+    }
   }
-}
 
-User.init(
-  {
-    id: {
-      allowNull: false,
-      autoIncrement: true,
-      primaryKey: true,
-      type: DataTypes.INTEGER,
+  User.init(
+    {
+      id: {
+        allowNull: false,
+        autoIncrement: true,
+        primaryKey: true,
+        type: DataTypes.INTEGER,
+      },
+      userType: {
+        type: DataTypes.ENUM('0', '1'),
+      },
+      firstName: {
+        type: DataTypes.STRING,
+      },
+      lastName: {
+        type: DataTypes.STRING,
+      },
+      email: {
+        type: DataTypes.STRING,
+      },
+      password: {
+        type: DataTypes.STRING,
+      },
+      isActive: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: true,
+      },
+      verificationToken: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      createdAt: {
+        allowNull: false,
+        type: DataTypes.DATE,
+      },
+      updatedAt: {
+        allowNull: false,
+        type: DataTypes.DATE,
+      },
     },
-    userType: {
-      type: DataTypes.ENUM('0', '1'),
-    },
-    firstName: {
-      type: DataTypes.STRING,
-    },
-    lastName: {
-      type: DataTypes.STRING,
-    },
-    email: {
-      type: DataTypes.STRING,
-    },
-    password: {
-      type: DataTypes.STRING,
-    },
-    isActive: {
-      type: DataTypes.BOOLEAN,
-      allowNull: false,
-      defaultValue: true, // ✅ Fixed typo and used BOOLEAN value
-    },
-    verificationToken: {
-      type: DataTypes.STRING, // ✅ Stores the email verification token
-      allowNull: true, // Can be null after the user is verified
-    },
-    createdAt: {
-      allowNull: false,
-      type: DataTypes.DATE,
-    },
-    updatedAt: {
-      allowNull: false,
-      type: DataTypes.DATE,
-    },
-  },
-  {
-    sequelize, // Pass the sequelize instance
-    modelName: 'User', //  Capitalized the model name to follow convention
-    paranoid: false,
-    freezeTableName: true, // Keeps table name as 'Users' (no plural)
-    tableName: 'Users', // Explicitly set the table name to 'Users' (case-sensitive)
-  }
-);
+    {
+      sequelize,
+      modelName: 'User',
+      paranoid: false,
+      freezeTableName: true,
+      tableName: 'Users',
+    }
+  );
 
-module.exports = User;
+  return User;
+};
