@@ -4,7 +4,8 @@ const { Model } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class CompanyDetails extends Model {
     static associate(models) {
-      // Define associations later (e.g., belongsTo User)
+      // Associate with User model if needed
+      // this.belongsTo(models.User, { foreignKey: 'userId' });
     }
   }
 
@@ -12,9 +13,9 @@ module.exports = (sequelize, DataTypes) => {
     {
       companyName: {
         type: DataTypes.STRING,
-        allowNull: false, // Required field
+        allowNull: false,
         validate: {
-          notEmpty: true, // Must not be empty string
+          notEmpty: true,
         },
       },
       jobTitle: {
@@ -28,24 +29,51 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: false,
         validate: {
-          is: /^\d{4}-\d{4}$/, // Validate format (e.g., "2020-2023")
+          is: /^\d{4}-\d{4}$/,
         },
       },
       salary: {
         type: DataTypes.FLOAT,
         allowNull: false,
         validate: {
-          min: 0, // Prevent negative salaries
+          min: 0,
         },
+      },
+      // Document paths (Multer will store the files)
+      payslips: {
+        type: DataTypes.JSON, // Array of file paths
+        defaultValue: [],
+      },
+      appointmentLetter: {
+        type: DataTypes.STRING, // Single file path
+      },
+      incrementLetter: {
+        type: DataTypes.STRING,
+      },
+      promotionLetter: {
+        type: DataTypes.STRING,
+      },
+      recognitionAwards: {
+        type: DataTypes.JSON, // Array of file paths
+        defaultValue: [],
+      },
+      exitDocuments: {
+        type: DataTypes.JSON, // Array of file paths
+        defaultValue: [],
+      },
+      // Additional metadata
+      documentsDirectory: {
+        type: DataTypes.STRING, // Custom directory for this record's documents
+        defaultValue: null,
       },
     },
     {
       sequelize,
       modelName: 'CompanyDetails',
-      tableName: 'company_details', // Explicit snake_case table name
-      timestamps: true, // Enable createdAt/updatedAt
-      paranoid: false, // Disable soft-delete (set true if needed)
-      underscored: true, // Auto-convert camelCase to snake_case
+      tableName: 'company_details',
+      timestamps: true,
+      paranoid: false,
+      underscored: true,
     }
   );
 
