@@ -27,16 +27,34 @@ exports.createCompanyDetails = async (req, res) => {
     const fileData = {};
 
     // Single files
+    // Handle single file uploads
     if (req.files.appointmentLetter) {
       fileData.appointmentLetter = req.files.appointmentLetter[0].path;
     }
     if (req.files.incrementLetter) {
       fileData.incrementLetter = req.files.incrementLetter[0].path;
     }
+    if (req.files.promotionLetter) {
+      fileData.promotionLetter = req.files.promotionLetter[0].path;
+    }
 
-    // Multiple files
+    // Handle multiple file uploads
     if (req.files.payslips) {
       fileData.payslips = req.files.payslips.map((file) => ({
+        path: file.path,
+        originalName: file.originalname,
+        uploadedAt: new Date(),
+      }));
+    }
+    if (req.files.recognitionAwards) {
+      fileData.recognitionAwards = req.files.recognitionAwards.map((file) => ({
+        path: file.path,
+        originalName: file.originalname,
+        uploadedAt: new Date(),
+      }));
+    }
+    if (req.files.exitDocuments) {
+      fileData.exitDocuments = req.files.exitDocuments.map((file) => ({
         path: file.path,
         originalName: file.originalname,
         uploadedAt: new Date(),

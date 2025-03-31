@@ -6,11 +6,25 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // Associate with User model if needed
       // this.belongsTo(models.User, { foreignKey: 'userId' });
+      // Uncomment and use this if you have a User model
+      this.belongsTo(models.User, {
+        foreignKey: 'userId',
+        as: 'user', // optional: gives you a nice name for the association
+      });
     }
   }
 
   CompanyDetails.init(
     {
+      userId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        field: 'user_id', // Maps to snake_case in database
+        references: {
+          model: 'users', // Must match your users table name exactly
+          key: 'id',
+        },
+      },
       companyName: {
         type: DataTypes.STRING,
         allowNull: false,
