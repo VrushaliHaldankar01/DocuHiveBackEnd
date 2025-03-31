@@ -5,6 +5,7 @@ const cors = require('cors');
 const path = require('path');
 const authRouter = require('./route/authRoute');
 const personalDetailsRoutes = require('./route/personalDetailsRoute');
+const companyRoutes = require('./route/companyRoutes');
 
 // Middlewares
 app.use(express.json());
@@ -29,7 +30,7 @@ app.get('/', (req, res) => {
 
 app.use('/api/v1/auth', authRouter);
 app.use('/api', personalDetailsRoutes);
-
+app.use('/api', companyRoutes);
 // 404 Handler
 app.use('*', (req, res) => {
   res.status(404).json({
