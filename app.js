@@ -6,7 +6,7 @@ const path = require('path');
 const authRouter = require('./route/authRoute');
 const personalDetailsRoutes = require('./route/personalDetailsRoute');
 const companyRoutes = require('./route/companyRoutes');
-
+const searchRouter = require('./route/searchRoutes');
 // Middlewares
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -31,6 +31,8 @@ app.get('/', (req, res) => {
 app.use('/api/v1/auth', authRouter);
 app.use('/api', personalDetailsRoutes);
 app.use('/api', companyRoutes);
+
+app.use('/api', searchRouter);
 // 404 Handler
 app.use('*', (req, res) => {
   res.status(404).json({
