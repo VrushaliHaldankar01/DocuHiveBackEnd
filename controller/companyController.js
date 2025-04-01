@@ -6,6 +6,7 @@ exports.createCompanyDetails = async (req, res) => {
     const { companyName, jobTitle, employmentPeriod, salary, userId } =
       req.body;
 
+    // Validate required fields
     if (!companyName || !jobTitle || !employmentPeriod || !salary || !userId) {
       return res.status(400).json({
         error: 'Missing required fields',
@@ -26,16 +27,30 @@ exports.createCompanyDetails = async (req, res) => {
     // Process files
     const fileData = {};
 
-    // Single files
-    // Handle single file uploads
+    // Check if record exists for this user
+    const existingDetails = await CompanyDetails.findOne({
+      where: { userId },
+    });
+
+    // Handle file uploads (same as before)
     if (req.files.appointmentLetter) {
       fileData.appointmentLetter = req.files.appointmentLetter[0].path;
+      // Delete old file if updating
+      if (existingDetails?.appointmentLetter) {
+        fs.unlinkSync(existingDetails.appointmentLetter);
+      }
     }
     if (req.files.incrementLetter) {
       fileData.incrementLetter = req.files.incrementLetter[0].path;
+      if (existingDetails?.incrementLetter) {
+        fs.unlinkSync(existingDetails.incrementLetter);
+      }
     }
     if (req.files.promotionLetter) {
       fileData.promotionLetter = req.files.promotionLetter[0].path;
+      if (existingDetails?.promotionLetter) {
+        fs.unlinkSync(existingDetails.promotionLetter);
+      }
     }
 
     // Handle multiple file uploads
@@ -45,6 +60,12 @@ exports.createCompanyDetails = async (req, res) => {
         originalName: file.originalname,
         uploadedAt: new Date(),
       }));
+      // Delete old payslips if updating
+      if (existingDetails?.payslips) {
+        existingDetails.payslips.forEach((payslip) => {
+          if (fs.existsSync(payslip.path)) fs.unlinkSync(payslip.path);
+        });
+      }
     }
     if (req.files.recognitionAwards) {
       fileData.recognitionAwards = req.files.recognitionAwards.map((file) => ({
@@ -52,6 +73,11 @@ exports.createCompanyDetails = async (req, res) => {
         originalName: file.originalname,
         uploadedAt: new Date(),
       }));
+      if (existingDetails?.recognitionAwards) {
+        existingDetails.recognitionAwards.forEach((award) => {
+          if (fs.existsSync(award.path)) fs.unlinkSync(award.path);
+        });
+      }
     }
     if (req.files.exitDocuments) {
       fileData.exitDocuments = req.files.exitDocuments.map((file) => ({
@@ -59,25 +85,48 @@ exports.createCompanyDetails = async (req, res) => {
         originalName: file.originalname,
         uploadedAt: new Date(),
       }));
+      if (existingDetails?.exitDocuments) {
+        existingDetails.exitDocuments.forEach((doc) => {
+          if (fs.existsSync(doc.path)) fs.unlinkSync(doc.path);
+        });
+      }
     }
 
-    // Create record
-    const companyDetails = await CompanyDetails.create({
-      userId,
-      companyName,
-      jobTitle,
-      employmentPeriod,
-      salary,
-      ...fileData,
-      documentsDirectory: 'uploads/company_documents/',
-    });
+    let companyDetails;
+    let action;
 
-    res.status(201).json({
-      message: 'Company details created successfully', // Fixed typo "messsage"
+    if (existingDetails) {
+      // Update existing record
+      companyDetails = await existingDetails.update({
+        companyName,
+        jobTitle,
+        employmentPeriod,
+        salary,
+        ...fileData,
+        documentsDirectory: 'uploads/company_documents/',
+      });
+      action = 'updated';
+    } else {
+      // Create new record
+      companyDetails = await CompanyDetails.create({
+        userId,
+        companyName,
+        jobTitle,
+        employmentPeriod,
+        salary,
+        ...fileData,
+        documentsDirectory: 'uploads/company_documents/',
+      });
+      action = 'created';
+    }
+
+    res.status(200).json({
+      message: `Company details ${action} successfully`,
       data: companyDetails,
+      action,
     });
   } catch (error) {
-    console.error('Error creating company details:', error);
+    console.error('Error processing company details:', error);
 
     // Cleanup files
     if (req.files) {
