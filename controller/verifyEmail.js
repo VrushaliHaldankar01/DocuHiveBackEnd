@@ -1,5 +1,7 @@
-const User = require('../db/models/users');
-
+const sequelize = require('../config/db');
+const { Sequelize, DataTypes } = require('sequelize');
+const UserModel = require('../db/models/users');
+const User = UserModel(sequelize, DataTypes);
 const verifyEmail = async (req, res) => {
   try {
     const { token } = req.query;

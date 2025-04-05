@@ -105,3 +105,55 @@ exports.createPersonalDetails = async (req, res) => {
     });
   }
 };
+
+// get perosnalDetail
+
+exports.getPersonalDetails = async (req, res) => {
+  try {
+    const { userId } = req.query;
+    if (!userId) {
+      return res.status(400).json({
+        error: 'User ID is required',
+        details: 'Please provide a valid user ID in the URL',
+      });
+    }
+
+    // query the databse for personal details
+
+    const personalDetail = await PersonalDetails.findOne({
+      where: { userId },
+      attributes: [
+        'id',
+        'userId',
+        'degree',
+        'institution',
+        'graduationYear',
+        'portfolioLink',
+        'resume', // File path
+        'coverLetter', // File path
+        'createdAt',
+        'updatedAt',
+      ],
+    });
+
+    if (!personalDetail) {
+      return res.status(400).json({
+        message: 'Personal Details not found',
+        suggestion: 'creater personal detail first',
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: personalDetail,
+    });
+  } catch (error) {
+    // 6. Handle errors
+    console.error('Error fetching personal details:', error);
+
+    res.status(500).json({
+      error: 'Internal server error',
+      message: error.message,
+    });
+  }
+};

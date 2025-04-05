@@ -2,6 +2,7 @@ const router = require('express').Router();
 const upload = require('../middlewares/upload');
 const {
   createPersonalDetails,
+  getPersonalDetails,
 } = require('../controller/personalDetailController');
 
 router.route('/personal-details').post(
@@ -14,5 +15,6 @@ router.route('/personal-details').post(
   ]),
   createPersonalDetails
 );
+router.route('/display-personal-details').get(getPersonalDetails);
 
 module.exports = router;

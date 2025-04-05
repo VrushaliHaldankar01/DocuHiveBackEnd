@@ -6,8 +6,4 @@ router.get('/search-docs', searchController.searchDocuments);
 
 module.exports = router;
 
-// router.route('/signup').post(signup);
-// router.route('/login').post(login);
-// router.route('/verifyEmail').get(verifyEmail);
-
 module.exports = router;

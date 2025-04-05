@@ -1,7 +1,7 @@
 'use strict';
 const { Model } = require('sequelize');
 
-module.exports = (sequelize, DataTypes) => {
+const User = (sequelize, DataTypes) => {
   class User extends Model {
     static associate(models) {
       User.hasOne(models.PersonalDetails, {
@@ -63,3 +63,4 @@ module.exports = (sequelize, DataTypes) => {
 
   return User;
 };
+module.exports = User;
